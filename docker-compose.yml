@@ -24,4 +24,4 @@ services:
       POSTGRES_PASSWORD: 26327362763
       POSTGRES_DB: production
     ports:
-      - "5432:5432"
+      - "5000:5432"
