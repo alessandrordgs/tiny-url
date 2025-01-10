@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: tiny_url
+    ports:
+      - "3000:3000"           
+    depends_on:
+      - db                  
+    environment:
+      DB_HOST: db            
+      DB_PORT: 5432         
+      DB_USER: tiny_url_db
+      DB_PASSWORD: 26327362763
+      DB_NAME: production
+    volumes:
+      - ./:/usr/src/app      
+
+  db:
+    image: postgres:15-alpine
+    container_name: meu_postgres
+    environment:
+      POSTGRES_USER: tiny_url_db
+      POSTGRES_PASSWORD: 26327362763
+      POSTGRES_DB: production
+    ports:
+      - "5432:5432"
