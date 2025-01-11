@@ -26,8 +26,16 @@ export class UrlsService {
     }
   }
 
-  findAll() {
-    return `This action returns all urls`;
+  async findAll(user_id: string) {
+    const urls = await this.urlRepository.findOne({
+      where: {
+        user_id,
+      },
+      relations: {
+        views: true,
+      },
+    });
+    return urls;
   }
 
   async findOne(id: string) {

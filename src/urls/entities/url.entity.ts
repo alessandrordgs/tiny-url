@@ -1,8 +1,10 @@
+import { View } from 'src/views/entities/view.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,8 +17,14 @@ export class Url {
   @Column()
   original_url: string;
 
+  @Column({ nullable: true })
+  user_id: string;
+
   @Column()
   reference_code: string;
+
+  @OneToMany(() => View, (View) => View.url_id)
+  views: View[];
 
   @CreateDateColumn()
   created_at: Date;
