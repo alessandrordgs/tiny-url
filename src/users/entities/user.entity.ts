@@ -1,8 +1,10 @@
+import { Url } from 'src/urls/entities/url.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -18,6 +20,8 @@ export class User {
   @Column()
   email: string;
 
+  @OneToMany(() => Url, (url) => url.user_id)
+  urls: Url[];
   @Column({ select: false })
   password: string;
 

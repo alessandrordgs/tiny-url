@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { UpdatePasswordDTo } from './dto/password-user.dto';
+import { LoginUserDTo } from './dto/login-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -34,7 +35,12 @@ export class UsersService {
   }
 
   async updatePassword(id: string, UpdatePasswordDTo: UpdatePasswordDTo) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      select: ['id', 'email', 'password'],
+    });
 
     if (!user) {
       throw new Error('User not found');
@@ -49,6 +55,33 @@ export class UsersService {
     return await this.userRepository.save({
       ...user,
       password: await hash(UpdatePasswordDTo.newPassword, 10),
+    });
+  }
+
+  async findUserByLogin(LoginUserDTo: LoginUserDTo) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: LoginUserDTo.email,
+      },
+      select: ['id', 'email', 'password'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const isEqual = await compare(LoginUserDTo.password, user.password);
+
+    if (!isEqual) {
+      throw new Error('Password is incorrect');
+    }
+
+    return user;
+  }
+
+  async findUserByPayload({ login }: any) {
+    return await this.userRepository.findOne({
+      where: login,
     });
   }
 }
