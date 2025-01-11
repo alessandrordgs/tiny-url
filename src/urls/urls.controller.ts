@@ -6,7 +6,7 @@ import { CreateUrlDto } from './dto/create-url.dto';
 export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
-  @Post()
+  @Post('create-url')
   async create(@Body() createUrlDto: CreateUrlDto) {
     const newUrl = await this.urlsService.create(createUrlDto);
     return {
