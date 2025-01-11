@@ -1,10 +1,14 @@
 import { Controller, Get, Post, Body, Param, Redirect } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';
+import { ViewsService } from '../views/views.service';
 
 @Controller('')
 export class UrlsController {
-  constructor(private readonly urlsService: UrlsService) {}
+  constructor(
+    private readonly urlsService: UrlsService,
+    private readonly ViewsService: ViewsService,
+  ) {}
 
   @Post('create-url')
   async create(@Body() createUrlDto: CreateUrlDto) {
@@ -24,6 +28,7 @@ export class UrlsController {
   @Redirect()
   async findOne(@Param('code') code: string) {
     const url = await this.urlsService.findOne(code);
+    await this.ViewsService.create({ url_id: url.id });
     return { url: url.original_url };
   }
 }

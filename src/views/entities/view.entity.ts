@@ -1,4 +1,4 @@
-import { Url } from 'src/urls/entities/url.entity';
+import { Url } from '../../urls/entities/url.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('views')
 export class View {
   @PrimaryGeneratedColumn('uuid')
   id: string;

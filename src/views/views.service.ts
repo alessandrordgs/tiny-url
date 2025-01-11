@@ -11,7 +11,7 @@ export class ViewsService {
     private viewRepository: Repository<View>,
   ) {}
   async create(createViewDto: CreateViewDto) {
-    return await this.viewRepository.save({ ...createViewDto });
+    return await this.viewRepository.save(createViewDto);
   }
 
   findAll() {

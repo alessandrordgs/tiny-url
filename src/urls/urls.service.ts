@@ -38,6 +38,7 @@ export class UrlsService {
     });
     return {
       original_url: url.original_url,
+      id: url.id,
     };
   }
 }
