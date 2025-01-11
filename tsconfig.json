@@ -17,5 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "./.eslintrc.js",
+    "./test/**/*.ts",
+    "commitlint.config.ts"
+  ]
 }
