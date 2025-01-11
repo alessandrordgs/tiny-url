@@ -14,7 +14,7 @@ COPY . .
 
 # RUN yarn run migration:run
 # Expõe a porta 3000 (ou a que seu app utilizar)
-EXPOSE 3000
+EXPOSE 3001
 
 # Define o comando para iniciar a aplicação
 CMD yarn migration:run && yarn start --host 0.0.0.0

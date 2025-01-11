@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UrlsModule } from './urls/urls.module';
 import { ViewsModule } from './views/views.module';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -22,6 +23,7 @@ import { ViewsModule } from './views/views.module';
     }),
     UrlsModule,
     ViewsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

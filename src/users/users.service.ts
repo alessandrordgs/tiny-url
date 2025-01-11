@@ -1,0 +1,54 @@
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { hash, compare } from 'bcrypt';
+import { UpdatePasswordDTo } from './dto/password-user.dto';
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+  async create(createUserDto: CreateUserDto) {
+    const hasUser = await this.userRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
+    if (hasUser) {
+      throw new Error('User already exists');
+    }
+
+    return await this.userRepository.save({
+      ...createUserDto,
+      password: await hash(createUserDto.password, 10),
+    });
+  }
+
+  update(id: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.save({ ...updateUserDto, id: id });
+  }
+
+  async updatePassword(id: string, UpdatePasswordDTo: UpdatePasswordDTo) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const isEqual = await compare(UpdatePasswordDTo.password, user.password);
+
+    if (!isEqual) {
+      throw new Error('Password is incorrect');
+    }
+
+    return await this.userRepository.save({
+      ...user,
+      password: await hash(UpdatePasswordDTo.newPassword, 10),
+    });
+  }
+}
