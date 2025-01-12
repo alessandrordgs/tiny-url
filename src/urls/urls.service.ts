@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Url } from './entities/url.entity';
 import { Repository } from 'typeorm';
 import Code from './utils/code';
+import { UpdateUrlDto } from './dto/update-url.dto';
 
 @Injectable()
 export class UrlsService {
@@ -27,14 +28,11 @@ export class UrlsService {
   }
 
   async findAll(user_id: string) {
-    const urls = await this.urlRepository.findOne({
-      where: {
-        user_id,
-      },
-      relations: {
-        views: true,
-      },
-    });
+    const urls = this.urlRepository
+      .createQueryBuilder('url')
+      .loadRelationCountAndMap('url.viewsCount', 'url.views')
+      .where('url.user_id = :user_id', { user_id })
+      .getMany();
     return urls;
   }
 
@@ -48,5 +46,31 @@ export class UrlsService {
       original_url: url.original_url,
       id: url.id,
     };
+  }
+
+  async update(id: string, UpdateUrlDto: UpdateUrlDto) {
+    const url = await this.urlRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!url) {
+      throw new NotFoundException('Url not found');
+    }
+    return await this.urlRepository.save({
+      ...url,
+      ...UpdateUrlDto,
+    });
+  }
+  async remove(id: string) {
+    const url = await this.urlRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!url) {
+      throw new NotFoundException('Url not found');
+    }
+    return await this.urlRepository.softDelete(url.id);
   }
 }

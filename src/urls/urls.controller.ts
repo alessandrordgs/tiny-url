@@ -7,12 +7,15 @@ import {
   Redirect,
   Headers,
   UseGuards,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { ViewsService } from '../views/views.service';
-import { AuthService } from 'src/auth/auth.service';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 
 @Controller('')
 export class UrlsController {
@@ -23,9 +26,14 @@ export class UrlsController {
   ) {}
 
   @Post('create-url')
+  @ApiHeader({
+    name: 'authorization',
+    description: 'Bearer token',
+    required: false,
+  })
   async create(
     @Body() createUrlDto: CreateUrlDto,
-    @Headers('authorization') token: string,
+    @Headers('authorization') token?: string,
   ) {
     if (token) {
       const user = await this.AuthService.getUserFromAuthenticationToken(
@@ -41,7 +49,8 @@ export class UrlsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/list')
+  @ApiBearerAuth()
+  @Get('urls/list')
   async findAll(@Headers('authorization') token: string) {
     if (token) {
       const user = await this.AuthService.getUserFromAuthenticationToken(
@@ -58,5 +67,24 @@ export class UrlsController {
     const url = await this.urlsService.findOne(code);
     await this.ViewsService.create({ url_id: url.id });
     return { url: url.original_url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Delete('urls/:id')
+  async remove(@Param('id') id: string) {
+    await this.urlsService.remove(id);
+    return 'Url deleted successfully';
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Patch('urls/:code')
+  async update(@Param('code') code: string, @Body() body: any) {
+    const url = await this.urlsService.update(code, body);
+    return {
+      message: 'Url updated successfully',
+      url: `${process.env.APP_URL}/${url.reference_code}`,
+    };
   }
 }

@@ -16,7 +16,6 @@ describe('ViewsService', () => {
         {
           provide: getRepositoryToken(View),
           useValue: {
-            // Mocked repository methods
             findOneBy: jest.fn(),
             save: jest.fn(),
           },
@@ -34,7 +33,6 @@ describe('ViewsService', () => {
 
   describe('create', () => {
     it('should call repository.save with the DTO and return the saved record', async () => {
-      // Arrange
       const createViewDto: CreateViewDto = {
         url_id: 'test-url-id',
       };
@@ -46,17 +44,14 @@ describe('ViewsService', () => {
 
       (repository.save as jest.Mock).mockResolvedValue(savedView);
 
-      // Act
       const result = await service.create(createViewDto);
 
-      // Assert
       expect(repository.save).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledWith(createViewDto);
       expect(result).toEqual(savedView);
     });
 
     it('should propagate any error thrown by repository.save', async () => {
-      // Arrange
       const createViewDto: CreateViewDto = {
         url_id: 'error-url-id',
       };
@@ -65,7 +60,6 @@ describe('ViewsService', () => {
         new Error('Error saving to the database'),
       );
 
-      // Act & Assert
       await expect(service.create(createViewDto)).rejects.toThrow(
         'Error saving to the database',
       );

@@ -5,6 +5,7 @@ import { UrlsService } from './urls.service';
 import { Url } from './entities/url.entity';
 import { CreateUrlDto } from './dto/create-url.dto';
 import Code from './utils/code';
+import { JwtService } from '@nestjs/jwt';
 
 jest.mock('./utils/code');
 
@@ -20,6 +21,7 @@ describe('UrlsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UrlsService,
+        JwtService,
         {
           provide: getRepositoryToken(Url),
           useValue: {
@@ -39,13 +41,10 @@ describe('UrlsService', () => {
   });
 
   it('should create a new record if the generated reference code does not exist in the database', async () => {
-    // Mock the Code.generate() method to return a specific code
     (Code.generate as jest.Mock).mockReturnValue('ABC123');
 
-    // Mock the repository method: findOneBy returns null, indicating no existing record
     urlsRepository.findOneBy.mockResolvedValue(null);
 
-    // Mock the repository save method
     urlsRepository.save.mockResolvedValue({
       id: '1',
       reference_code: 'ABC123',

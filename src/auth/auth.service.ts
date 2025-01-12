@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
-import { LoginUserDTo } from 'src/users/dto/login-user.dto';
+import { UsersService } from '../users/users.service';
+import { LoginUserDTo } from '../users/dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,7 @@ export class AuthService {
   async validateUser(payload: any) {
     const user = await this.UsersService.findUserByPayload(payload);
     if (!user) {
-      throw new Error('Unauthorized');
+      throw new ForbiddenException('Unauthorized');
     }
     return user;
   }

@@ -1,9 +1,10 @@
 import { Url } from '../../urls/entities/url.entity';
 import {
-  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -12,10 +13,10 @@ export class View {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @ManyToOne(() => Url, (url) => url.views)
+  @JoinColumn({ name: 'url_id' })
   url_id: string;
 
-  url: Url;
   @CreateDateColumn()
   created_at: Date;
 

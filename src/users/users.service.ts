@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -49,7 +49,7 @@ export class UsersService {
     const isEqual = await compare(UpdatePasswordDTo.password, user.password);
 
     if (!isEqual) {
-      throw new Error('Password is incorrect');
+      throw new ForbiddenException('Password is incorrect');
     }
 
     return await this.userRepository.save({
@@ -73,7 +73,7 @@ export class UsersService {
     const isEqual = await compare(LoginUserDTo.password, user.password);
 
     if (!isEqual) {
-      throw new Error('Password is incorrect');
+      throw new ForbiddenException('Password is incorrect');
     }
 
     return user;

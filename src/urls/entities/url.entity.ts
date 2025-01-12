@@ -1,9 +1,10 @@
-import { View } from 'src/views/entities/view.entity';
+import { View } from '../../views/entities/view.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -24,6 +25,7 @@ export class Url {
   reference_code: string;
 
   @OneToMany(() => View, (View) => View.url_id)
+  @JoinColumn({ name: 'url_id' })
   views: View[];
 
   @CreateDateColumn()
